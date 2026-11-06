@@ -1,0 +1,476 @@
+<!doctype html>
+<html lang="zh"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>此符无效，请重新输入 · 短剧改编大纲</title>
+<style>
+:root{
+  --paper:#eceded; --panel:#f5f6f5; --side:#e4e6e3; --ink:#191d21; --ink-2:#5b636a; --ink-3:#8c9298;
+  --rule:#d2d5d0; --rule-2:#c2c6bf; --seal:#8a3324; --seal-2:#c56a4e; --seal-3:#e0a98c; --seal-soft:#8a332412; --ok:#3d6b4f;
+  --serif:"Songti SC","STSong","Source Han Serif SC","Noto Serif CJK SC",Georgia,serif;
+  --sans:"PingFang SC","Hiragino Sans GB","Microsoft YaHei",system-ui,-apple-system,sans-serif;
+  --mono:ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:14px/1.7 var(--sans);-webkit-font-smoothing:antialiased}
+.page{max-width:1600px;margin:0 auto;padding:24px 32px 90px}
+h1,h2,h3{margin:0;font-weight:400}
+
+.hd{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;border-bottom:2px solid var(--ink);padding-bottom:12px}
+.hd h1{font:400 28px/1.1 var(--serif);letter-spacing:.06em}
+.hd .sub{font-size:13px;color:var(--ink-2)}
+.hd .right{margin-left:auto;display:flex;align-items:center;gap:10px}
+.gatepill{display:inline-flex;align-items:center;gap:6px;font:500 12px/1 var(--sans);border-radius:99px;padding:6px 12px}
+.gatepill.pass{color:var(--ok);border:1px solid var(--ok)}
+.gatepill.fail{color:var(--seal);border:1px solid var(--seal);background:var(--seal-soft)}
+.expo{font:500 11px/1 var(--sans);color:var(--ink-2);background:var(--panel);
+  border:1px solid var(--rule-2);border-radius:2px;padding:7px 11px;cursor:pointer;transition:.15s}
+.expo:hover{border-color:var(--seal);color:var(--seal)}
+.expo:focus-visible{outline:2px solid var(--seal);outline-offset:2px}
+
+.kpis{display:grid;grid-template-columns:repeat(6,1fr);gap:12px;margin:18px 0 6px}
+@media(max-width:980px){.kpis{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:560px){.kpis{grid-template-columns:repeat(2,1fr)}}
+.kpi{background:var(--panel);border:1px solid var(--rule);border-radius:2px;padding:11px 14px 9px}
+.kpi .l{font:500 10px/1 var(--sans);letter-spacing:.18em;color:var(--ink-3)}
+.kpi .v{font:400 28px/1.15 var(--serif);margin-top:5px}
+.kpi .v small{font:400 14px var(--serif);color:var(--ink-2)}
+.kpi .v.mode{font-size:21px;padding-top:5px}
+.kpi .d{font-size:11px;color:var(--ink-2);margin-top:1px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.kpi.accent{border-top:2px solid var(--seal)}
+
+.galert{margin:14px 0 0;border:1px solid var(--seal);background:var(--seal-soft);border-radius:2px;
+  padding:10px 14px;font-size:13px}
+.galert b{color:var(--seal)}
+.galert span{display:block;font-size:12px;color:var(--ink-2)}
+
+section{margin-top:34px}
+.sec-h{display:flex;align-items:baseline;gap:12px;border-bottom:1px solid var(--rule-2);padding-bottom:8px;margin-bottom:16px}
+.sec-h .no{font:500 12px/1 var(--mono);color:var(--seal)}
+.sec-h h2{font:400 20px/1.2 var(--serif);letter-spacing:.05em}
+.sec-h .note{margin-left:auto;font-size:12px;color:var(--ink-3)}
+
+/* beat-rhythm chart/table tabs */
+.tabs{display:flex;width:max-content;margin-bottom:12px;border:1px solid var(--rule-2);
+  border-radius:2px;overflow:hidden}
+.tab{font:500 12px/1 var(--sans);letter-spacing:.06em;padding:7px 16px;background:var(--panel);
+  border:0;cursor:pointer;color:var(--ink-2);transition:.15s}
+.tab + .tab{border-left:1px solid var(--rule-2)}
+.tab.on{background:var(--seal);color:#fff}
+.tab:focus-visible{outline:2px solid var(--seal);outline-offset:-2px}
+.tabpane{display:none}
+.tabpane.on{display:block}
+
+/* episode overview: first three cards, fade-out + expand */
+.epswrap{position:relative}
+.eps{position:relative}
+.epswrap.clip .eps .ep:nth-child(n+4){display:none}
+.epswrap.clip .eps::after{content:'';position:absolute;left:0;right:0;bottom:0;height:90px;
+  background:linear-gradient(180deg,transparent,var(--paper));pointer-events:none}
+.epsmore{display:block;margin:10px auto 0;font:500 12px/1 var(--sans);letter-spacing:.06em;
+  color:var(--ink-2);background:var(--panel);border:1px solid var(--rule-2);border-radius:2px;
+  padding:8px 18px;cursor:pointer;transition:.15s}
+.epsmore:hover{border-color:var(--seal);color:var(--seal)}
+.epsmore:focus-visible{outline:2px solid var(--seal);outline-offset:2px}
+
+/* key decisions: the three sign-off items */
+.dec3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:24px;align-items:start}
+@media(max-width:1080px){.dec3{grid-template-columns:1fr}}
+.dcol{background:var(--panel);border:1px solid var(--rule);border-radius:2px;padding:4px 18px 14px}
+.dhead{margin:8px 0 0;font-size:12.5px;color:var(--ink-2)}
+.dlist{list-style:none;margin:8px 0 0;padding:0}
+.dlist li{padding:7px 0;border-top:1px solid var(--rule)}
+.dlist li:first-child{border-top:0}
+.dlist b{display:block;font:400 13.5px/1.6 var(--serif)}
+.dlist small{display:block;font-size:11.5px;color:var(--ink-2);line-height:1.6}
+.dnote{margin:10px 0 0;font-size:12px;color:var(--ink-2);line-height:1.7}
+.dnote.seal{color:var(--seal);background:var(--seal-soft);padding:7px 10px;border-radius:2px}
+.dmaj{list-style:none;margin:8px 0 0;padding:0}
+.dmaj li{display:flex;gap:9px;align-items:baseline;padding:5.5px 0;border-top:1px solid var(--rule);font-size:12.5px}
+.dmaj li:first-child{border-top:0}
+.dmaj i{flex:none;font:500 11px/1 var(--mono);color:var(--seal);font-style:normal;min-width:38px}
+.dmaj b{font:400 12.5px var(--serif)}
+.dmaj span{min-width:0}
+.dmaj em{flex:none;margin-left:auto;font:500 10px/1 var(--sans);letter-spacing:.1em;font-style:normal;
+  color:var(--seal);border:1px solid var(--seal);border-radius:99px;padding:2px 7px}
+
+/* beat-rhythm timeline */
+.chart{background:var(--panel);border:1px solid var(--rule);border-radius:2px;padding:16px 20px 10px}
+.chart .legend{display:flex;gap:18px;font-size:12px;color:var(--ink-2);margin-bottom:2px}
+.chart .legend i{font-style:normal;display:inline-flex;align-items:center;gap:6px}
+.dotk{display:inline-block;width:9px;height:9px;border-radius:50%;background:var(--seal-2)}
+.dotk.major{width:12px;height:12px;background:var(--seal)}
+.rhythm .beat-row{position:relative;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:16px 12px}
+.rhythm .beat-row+.beat-row{margin-top:18px}
+.rhythm .beat-row:before{content:"";position:absolute;top:13px;left:10%;right:10%;height:1px;background:var(--rule-2)}
+.rhythm .beat-node{position:relative;min-width:0}
+.rhythm .beat-rail{height:27px;display:flex;justify-content:center;align-items:center}
+.rhythm .beat-dot{position:relative;z-index:1;width:10px;height:10px;border:2px solid var(--panel);border-radius:50%;background:var(--seal-2);box-shadow:0 0 0 1px var(--seal-2)}
+.rhythm .beat-node.major .beat-dot{width:14px;height:14px;background:var(--seal);box-shadow:0 0 0 1px var(--seal)}
+.rhythm .beat-copy{border-top:1px solid var(--rule);padding:8px 6px 0;min-height:88px}
+.rhythm .beat-meta{display:block;margin-bottom:5px;font:500 10px/1.4 var(--mono);color:var(--ink-3)}
+.rhythm .blabel{display:block;font:500 12.5px/1.45 var(--sans);color:var(--ink);overflow-wrap:anywhere}
+.rhythm .beat-node.major .blabel{color:var(--seal)}
+.rhythm .bsub{margin:5px 0 0;font:400 11px/1.55 var(--sans);color:var(--ink-2);overflow-wrap:anywhere}
+@media(max-width:900px){.rhythm .beat-row{grid-template-columns:repeat(3,minmax(0,1fr))}.rhythm .beat-row:before{display:none}}
+@media(max-width:520px){.rhythm .beat-row{grid-template-columns:repeat(2,minmax(0,1fr))}.rhythm .beat-copy{min-height:96px}}
+
+/* beat detail table + generic tables */
+table{width:100%;border-collapse:collapse;background:var(--panel);border:1px solid var(--rule);font-size:13px}
+th,td{padding:8px 12px;border-bottom:1px solid var(--rule);text-align:left;vertical-align:top}
+th{font:500 11px/1 var(--sans);letter-spacing:.1em;color:var(--ink-3);background:var(--side)}
+tr:last-child td{border-bottom:0}
+td:first-child{font-family:var(--mono);font-size:12px;color:var(--ink-2);white-space:nowrap}
+q{quotes:"「" "」";font-family:var(--serif);border-left:2px solid var(--seal);padding-left:8px;display:inline-block}
+
+/* episode cards */
+.eps{display:grid;grid-template-columns:repeat(auto-fill,minmax(430px,1fr));gap:13px}
+.ep{background:var(--panel);border:1px solid var(--rule);border-radius:2px;padding:14px 16px 12px;position:relative}
+.ep .num{position:absolute;top:10px;right:14px;font:400 30px/1 var(--serif);color:var(--rule-2)}
+.ep header{display:flex;align-items:center;gap:8px;margin-bottom:8px;padding-right:44px;flex-wrap:wrap}
+.ep header b{font:500 15px var(--serif);letter-spacing:.04em}
+.bt{font-style:normal;font-size:11px;padding:2px 8px;border:1px solid var(--seal);border-radius:99px;color:var(--seal)}
+.bt.major{background:var(--seal);color:#fff}
+.ep .syn{margin:0 0 8px;font-size:13px;line-height:1.75}
+.hk{display:grid;grid-template-columns:max-content minmax(0,1fr);gap:8px;font-size:12.5px;padding:6px 0;border-top:1px solid var(--rule)}
+.hk b{font:500 11px/1.8 var(--sans);letter-spacing:.14em;color:var(--seal);white-space:nowrap}
+:root[lang="en"] .hk b,html[lang="en"] .hk b{letter-spacing:.06em}
+.ep .meta{display:flex;flex-wrap:wrap;gap:4px;margin-top:8px}
+.ep .meta i{font-style:normal;font:400 10.5px/1.5 var(--mono);border:1px solid var(--rule-2);
+  border-radius:2px;padding:0 5px;background:var(--paper);color:var(--ink-2)}
+.ep .meta .warn{border-color:var(--seal);color:var(--seal);background:var(--seal-soft)}
+
+/* dispatch matrix */
+.matrix{background:var(--panel);border:1px solid var(--rule);border-radius:2px;padding:16px 18px;overflow-x:auto}
+.matrix table{border-collapse:separate;border-spacing:3px;font-size:12px;background:none;border:0;width:auto}
+.matrix th,.matrix td{border:0;padding:0}
+.matrix th{font:500 10px/1 var(--sans);letter-spacing:.1em;color:var(--ink-3);background:none;
+  text-align:left;padding:0 8px 5px 0;white-space:nowrap}
+.matrix th.ep-h{text-align:center;padding:0 0 5px;font-family:var(--mono)}
+.matrix td.name{padding-right:10px;white-space:nowrap;font-family:var(--serif);font-size:13px}
+.matrix td.tier{padding-right:10px;color:var(--ink-3);font-size:11px;white-space:nowrap}
+.matrix td.mc{width:var(--cw,26px);min-width:var(--cw,26px);height:22px;border-radius:2px;
+  background:var(--paper);border:1px solid var(--rule)}
+.matrix td.mc.on{background:var(--seal);border-color:var(--seal)}
+.matrix td.mc.on.sc{background:var(--seal-2);border-color:var(--seal-2)}
+.matrix td.mc.on.pp{background:var(--seal-3);border-color:var(--seal-3)}
+.matrix td.n{padding-left:10px;font-family:var(--mono);font-size:11px;color:var(--ink-2);white-space:nowrap}
+.matrix tr.div td{padding:8px 0 3px;font:500 10px/1 var(--sans);letter-spacing:.18em;color:var(--ink-3)}
+.matrix .mnote{font-size:11px;color:var(--ink-3);margin:10px 0 0}
+
+/* scene overview cards: full-width multi-column grid */
+.scenes{display:grid;grid-template-columns:repeat(auto-fill,minmax(380px,1fr));gap:13px;align-items:start}
+.scard{position:relative;background:var(--panel);border:1px solid var(--rule);border-radius:2px;padding:14px 16px}
+.snum{position:absolute;top:10px;right:16px;font:400 26px/1 var(--serif);color:var(--rule-2);letter-spacing:.04em}
+.scard h3{font:400 16px/1.3 var(--serif);letter-spacing:.03em;display:flex;align-items:center;gap:8px;
+  padding-right:90px;flex-wrap:wrap}
+.scard h3 .id{font:400 10.5px var(--mono);color:var(--ink-3)}
+.badge{font:500 10.5px/1 var(--sans);padding:2px 8px;border-radius:99px;border:1px solid var(--seal);color:var(--seal)}
+.badge.once{border-color:var(--seal-2);color:var(--seal-2)}
+.strip{display:flex;flex-wrap:wrap;gap:3px;margin:7px 0 6px}
+.strip i{width:16px;height:10px;border-radius:2px;background:var(--paper);border:1px solid var(--rule)}
+.strip i.on{background:var(--seal);border-color:var(--seal)}
+.strip i.on.lt{background:var(--seal-2);border-color:var(--seal-2)}
+.srow{font-size:11.5px;color:var(--ink-2);display:flex;gap:6px;flex-wrap:wrap;align-items:baseline;margin-top:3px}
+.srow b{font:500 10px/1.8 var(--sans);letter-spacing:.12em;color:var(--ink-3);flex:none}
+.srow i{font-style:normal;font:400 10.5px/1.5 var(--mono);border:1px solid var(--rule-2);
+  border-radius:2px;padding:0 5px;background:var(--paper)}
+.srow .reuse{color:var(--seal)}
+
+/* asset conversion */
+.plan{background:var(--panel);border:1px solid var(--rule);border-radius:2px;padding:16px 18px}
+.plan table{background:none;border:0}
+.plan th{background:none;padding-left:0}
+.plan td{padding-left:0;border-top:1px solid var(--rule);border-bottom:0}
+.plan tr:first-child td{border-top:0}
+.plan td:first-child{font-family:var(--serif);font-size:13px;color:var(--ink)}
+
+/* adaptation notes */
+.core{font:400 17px/1.9 var(--serif);margin:0 0 6px}
+h3.sub{font:500 12px/1 var(--sans);letter-spacing:.18em;color:var(--seal);margin:20px 0 8px}
+
+/* quality gates */
+.gate{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:1fr 1fr;gap:2px 28px}
+@media(max-width:900px){.gate{grid-template-columns:1fr}}
+.gate li{display:flex;gap:8px;padding:5px 0;font-size:12.5px;line-height:1.55}
+.gate .m{flex:none;font-weight:700}
+.gate .ok .m,.gate li.ok .m{color:var(--ok)}
+.gate li.bad .m{color:var(--seal)}
+.gate li.bad{background:var(--seal-soft);border-radius:2px;padding-left:6px}
+.gate small{display:block;color:var(--ink-3)}
+.gsum{margin:10px 0 0;font-size:12px;color:var(--ink-2)}
+.gsum b{color:var(--seal)}
+
+.foot{margin-top:40px;font-size:11px;color:var(--ink-3);border-top:1px solid var(--rule);padding-top:14px}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+/* print: expand everything — both tab panes, all episode cards */
+@media print{
+  .expo,.tabs,.epsmore{display:none!important}
+  .tabpane{display:block!important;margin-bottom:14px}
+  .epswrap.clip .eps .ep{display:block!important}
+  .epswrap.clip .eps::after{display:none}
+  .page{max-width:none;padding:0}
+  section,.ep,.scard{page-break-inside:avoid}
+  body{background:#fff}
+}
+</style></head><body>
+<div class="page">
+
+<header class="hd">
+  <h1>此符无效，请重新输入</h1>
+  <span class="sub">短剧改编大纲 · 1 集 × 5 分钟 · 古今穿越·奇幻喜剧 · 抽核改编</span>
+  <span class="right">
+    <span class="gatepill fail">✗ 质量门 13 / 14</span>
+    <button class="expo" data-name="此符无效，请重新输入-outline.json">导出 JSON</button>
+  </span>
+</header>
+
+<div class="kpis">
+  <div class="kpi accent"><div class="l">总集数</div><div class="v">1 <small>× 5 分钟</small></div><div class="d">正片约 5 分钟</div></div>
+  <div class="kpi"><div class="l">爽点</div><div class="v">5</div><div class="d">1 大爆点</div></div>
+  <div class="kpi"><div class="l">角色</div><div class="v">3</div><div class="d">主角 2 · 配角 0 · 功能 1</div></div>
+  <div class="kpi"><div class="l">主场景</div><div class="v">3</div><div class="d">一次性场景 3，需复用方案</div></div>
+  <div class="kpi"><div class="l">生成难点</div><div class="v">0</div><div class="d">预警清单为空</div></div>
+  <div class="kpi"><div class="l">改编幅度</div><div class="v mode">抽核</div><div class="d">砍 2 线 · 合 0 组</div></div>
+</div>
+<div class="galert"><b>✗ 1 项未过</b><span>大爆点不在最后一集才首次出现 — 最早在第 1 集</span></div>
+
+<section id="sec-rhythm">
+  <div class="sec-h"><span class="no">01</span><h2>爽点节奏</h2></div>
+  <div class="tabs" role="tablist">
+    <button class="tab on" data-pane="pane-timeline">时间轴</button>
+    <button class="tab" data-pane="pane-table">明细表</button>
+  </div>
+  <div class="tabpane on" id="pane-timeline"><div class="chart rhythm">
+  <div class="legend">
+    <i><span class="dotk major"></span>大爆点</i>
+    <i><span class="dotk"></span>常规爽点</i>
+  </div>
+  <div class="beat-timeline" aria-label="爽点节奏"><div class="beat-row" role="list"><article class="beat-node" role="listitem">
+        <div class="beat-rail"><span class="beat-dot"></span></div>
+        <div class="beat-copy">
+          <span class="beat-meta">第 1 集 · B01</span>
+          <b class="blabel">愿望照字面反噬</b>
+          <p class="bsub">林末习惯给出宽泛要求，食愿兽也会把愿望按…</p>
+        </div>
+      </article>
+<article class="beat-node" role="listitem">
+        <div class="beat-rail"><span class="beat-dot"></span></div>
+        <div class="beat-copy">
+          <span class="beat-meta">第 1 集 · B02</span>
+          <b class="blabel">万能指令失控</b>
+          <p class="bsub">林末试图用一张符同时停止一切并恢复原样。</p>
+        </div>
+      </article>
+<article class="beat-node" role="listitem">
+        <div class="beat-rail"><span class="beat-dot"></span></div>
+        <div class="beat-copy">
+          <span class="beat-meta">第 1 集 · B03</span>
+          <b class="blabel">观察测试后协作救援</b>
+          <p class="bsub">小满要求先弄清符纸为何失效，林末开始检查…</p>
+        </div>
+      </article>
+<article class="beat-node major" role="listitem">
+        <div class="beat-rail"><span class="beat-dot"></span></div>
+        <div class="beat-copy">
+          <span class="beat-meta">第 1 集 · B04</span>
+          <b class="blabel">双向求助反转</b>
+          <p class="bsub">小满原以为自己召来能解决所有问题的高人，…</p>
+        </div>
+      </article>
+<article class="beat-node" role="listitem">
+        <div class="beat-rail"><span class="beat-dot"></span></div>
+        <div class="beat-copy">
+          <span class="beat-meta">第 1 集 · B05</span>
+          <b class="blabel">独立判断与续集信号</b>
+          <p class="bsub">林末带着小满留下的“先看清楚，再动手”回…</p>
+        </div>
+      </article></div></div>
+</div></div>
+  <div class="tabpane" id="pane-table">
+  <table><thead><tr><th>ID</th><th>类型</th><th>量级</th><th>集</th><th>铺垫</th><th>兑现</th></tr></thead>
+<tbody><tr><td>B01</td><td>愿望照字面反噬</td><td>常规</td><td>1</td><td>林末习惯给出宽泛要求，食愿兽也会把愿望按字面执行。</td><td>掌柜求金银满屋后，金元宝塞满铺子并困住人，建立规则和眼前危机。</td></tr>
+<tr><td>B02</td><td>万能指令失控</td><td>常规</td><td>1</td><td>林末试图用一张符同时停止一切并恢复原样。</td><td>食愿兽卡住却倒向路人，证明未澄清目标的指令会制造新风险。</td></tr>
+<tr><td>B03</td><td>观察测试后协作救援</td><td>常规</td><td>1</td><td>小满要求先弄清符纸为何失效，林末开始检查冲突指令并缩小目标。</td><td>两人先测试定身，再用路线、推车和木楔清出通道，救出掌柜、孩子和狗。</td></tr>
+<tr><td>B04</td><td>双向求助反转</td><td>大爆点</td><td>1</td><td>小满原以为自己召来能解决所有问题的高人，林末也一直想找人替他解决问题。</td><td>叠在召唤符背后的薄纸揭示，真正被召来的是遇到同样问题的人；两人承认彼此都在求助。</td></tr>
+<tr><td>B05</td><td>独立判断与续集信号</td><td>常规</td><td>1</td><td>林末带着小满留下的“先看清楚，再动手”回到办公室，老板再次要求他让 AI 自己改好。</td><td>林末根据测试记录自己设定发券边界并先跑小样本，再决定是否采用方案。小满隔屏出现后，两人一起核对一张来源不明的新符；它显出另一道尚未识别的符印，两人决定查清来历，下一次跨界求助由此展开。</td></tr></tbody></table>
+  </div>
+</section>
+
+<section id="sec-episodes">
+  <div class="sec-h"><span class="no">02</span><h2>分集概览</h2><span class="note">核心交付 · 每集三栏齐全</span></div>
+  <div class="epswrap">
+    <div class="eps">
+<article class="ep" id="ep-1">
+  <span class="num">1</span>
+  <header><b>第 1 集</b><i class="bt">愿望照字面反噬</i><i class="bt">万能指令失控</i><i class="bt">观察测试后协作救援</i><i class="bt major">双向求助反转</i><i class="bt">独立判断与续集信号</i></header>
+  <p class="syn">双十一前夜，林末因不愿细化需求而让促销助手一次发出百万张优惠券，随后在疲惫中被误录的求助愿望卷入符文。小满把他当成降妖高人，纸鹤将他的文字转换成符纸；两人尝试召来天师，却只得到模板式分析，食愿兽已闯入镇上市集。掌柜求金银满屋后，元宝塞满铺面并困住人，林末急着用一张万能符让一切停止又复原，反使食愿兽失控倾倒。小满拦下他，两人检查冲突指令，先以小范围定身符测试，再用推车、木楔和路线分工救出掌柜、孩子与狗。危机解除后，小满发现召唤符背面另有一张薄纸，显出她真正写下的是寻找一个遇到同样问题的人；林末也承认自己一直在求助。回到办公室，老板又要求他让 AI 自己改好。林末查看测试记录，自己确定优惠券的适用范围和单人上限，先用小样本验证再决定是否发布，不再把生成结果当成答案。小满留下的符映上屏幕，她没有替林末解咒，而是与他一起检查符文结构；两人确认彼此都能提供线索，却须各自判断。此时屏幕边缘浮出一枚两人都认不出的新符印，纸鹤也从画面外叼来一张空白符纸。林末没有立刻触碰，而是先记录符印、比对来源，再与小满决定共同查明它为何出现；新一轮跨界事件由此留下悬念。</p>
+  <div class="hk"><b>钩子</b><span>林末疲惫许下求助愿望，屏幕代码扭成朱砂符文，一张黄符将他吸入其中。</span></div>
+  <div class="hk"><b>悬念</b><span>食愿兽把愿望照字面实现，铺满元宝的店铺仍困着人；万能符又令它失控倾倒，林末和小满必须先找出指令失效的原因。危机结束后，两人都认不出屏幕上新出现的符印，它从何而来、是否还会召来新的求助者，仍待查明。</span></div>
+  <div class="meta"><i>S01</i><i>S02</i><i>S03</i><i>C01</i><i>C02</i><i>C03</i><i class="warn" title="林末和小满在救援主镜头中分工，纸鹤负责侦察并以独立近景或画面边缘提示信息；召唤、救援、反转分镜呈现，避免三名角色挤在同一动作画面。">同框拆解 ✓</i></div>
+</article>
+    </div>
+    
+  </div>
+</section>
+
+<section id="sec-scenes">
+  <div class="sec-h"><span class="no">03</span><h2>场景概览</h2><span class="note">右上 = 出现集</span></div>
+  <div class="scenes">
+<article class="scard">
+  <span class="snum">1</span>
+  <h3><span class="id">S01</span>现代办公室<span class="badge">主场景</span></h3>
+  <div class="strip"><i class="on"></i></div>
+  <div class="srow"><b>承载爽点</b><span>愿望照字面反噬 · 万能指令失控 · 观察测试后协作救援 · 双向求助反转 · 独立判断与续集信号</span></div>
+  <div class="srow"><b>复用方案</b><span class="reuse">同一办公室承载开场加班与结尾醒来；以屏幕、灯光和机位变化区分现实与符文异象。</span></div>
+</article>
+<article class="scard">
+  <span class="snum">1</span>
+  <h3><span class="id">S02</span>架空道观及门前<span class="badge">主场景</span></h3>
+  <div class="strip"><i class="on"></i></div>
+  <div class="srow"><b>承载爽点</b><span>愿望照字面反噬 · 万能指令失控 · 观察测试后协作救援 · 双向求助反转 · 独立判断与续集信号</span></div>
+  <div class="srow"><b>复用方案</b><span class="reuse">道观内外作为同一环境资产，台阶清理和钟声告别复用门前空间。</span></div>
+</article>
+<article class="scard">
+  <span class="snum">1</span>
+  <h3><span class="id">S03</span>镇上市集与窄巷<span class="badge">主场景</span></h3>
+  <div class="strip"><i class="on"></i></div>
+  <div class="srow"><b>承载爽点</b><span>愿望照字面反噬 · 万能指令失控 · 观察测试后协作救援 · 双向求助反转 · 独立判断与续集信号</span></div>
+  <div class="srow"><b>复用方案</b><span class="reuse">以同一街市环境重布摊位和推车位置，表现元宝堵门、巷口受阻与救援路线。</span></div>
+</article>
+  </div>
+</section>
+
+<section id="sec-decisions">
+  <div class="sec-h"><span class="no">04</span><h2>关键决策</h2><span class="note">拍板过的三件事，落进纸面</span></div>
+  <div class="dec3">
+  <div class="dcol">
+    <h3 class="sub">砍了哪条线</h3>
+    <ul class="dlist"><li><b>压缩金元宝清理和纸鹤搬运失败的重复插科打诨，仅保留一处作为收尾节奏点。</b><small>单集约五分钟，需要把时长留给失控、测试救援和双向求助反转。</small></li><li><b>将救援过程中的狗、推车改造和多轮搬运细节收束为一组清晰的协作动作。</b><small>保留观察与分工主题，减少支线动作对主线高潮的稀释。</small></li></ul>
+    <p class="dnote seal">压缩的是救援中的重复动作和次要笑料，不另砍人物线；主线终点是林末不再把答案交给 AI 或所谓高人，而是依据证据自行判断、验证后行动，并与小满平等协作。</p>
+  </div>
+  <div class="dcol">
+    <h3 class="sub">合了哪些人</h3>
+    <p class="dhead">3 个角色位（主角组 2 · 重要配角 0 · 功能性 1）</p>
+    <p class="dhead">主角组：林末、小满</p>
+    
+    <p class="dnote seal">不合并角色。林末承担需求拆解与工具习惯，小满承担符法规则与风险判断，纸鹤承担转换、侦察和旁观吐槽，三者功能不同。</p>
+  </div>
+  <div class="dcol">
+    <h3 class="sub">大爆点落在第几集</h3>
+    <ul class="dmaj"><li><i>ep1</i><span><b>双向求助反转</b> 叠在召唤符背后的薄纸揭示，真正被召来的是…</span><em>首个</em></li></ul>
+  </div>
+</div>
+</section>
+
+<section id="sec-matrix">
+  <div class="sec-h"><span class="no">05</span><h2>每集调度矩阵</h2><span class="note">一列 = 这一集要谁、在哪拍</span></div>
+  <div class="matrix" style="--cw:26px">
+  <table>
+    <tr><th>角色 / 场景 / 道具</th><th>层级</th><th class="ep-h">1</th><th>合计</th></tr>
+    <tr><td class="name">林末</td><td class="tier">主角组</td><td class="mc on"></td><td class="n">1</td></tr>
+<tr><td class="name">小满</td><td class="tier">主角组</td><td class="mc on"></td><td class="n">1</td></tr>
+<tr><td class="name">传信纸鹤</td><td class="tier">功能性角色</td><td class="mc on"></td><td class="n">1</td></tr>
+<tr class="div"><td colspan="4">场　景</td></tr>
+<tr><td class="name">现代办公室</td><td class="tier">主场景</td><td class="mc on sc"></td><td class="n">1 ⚠</td></tr>
+<tr><td class="name">架空道观及门前</td><td class="tier">主场景</td><td class="mc on sc"></td><td class="n">1 ⚠</td></tr>
+<tr><td class="name">镇上市集与窄巷</td><td class="tier">主场景</td><td class="mc on sc"></td><td class="n">1 ⚠</td></tr>
+  </table>
+  <p class="mnote">⚠ 现代办公室 · 复用方案：同一办公室承载开场加班与结尾醒来；以屏幕、灯光和机位变化区分现实与符文异象。<br>⚠ 架空道观及门前 · 复用方案：道观内外作为同一环境资产，台阶清理和钟声告别复用门前空间。<br>⚠ 镇上市集与窄巷 · 复用方案：以同一街市环境重布摊位和推车位置，表现元宝堵门、巷口受阻与救援路线。</p>
+</div>
+</section>
+
+<section id="sec-plan">
+  <div class="sec-h"><span class="no">06</span><h2>资产量折算</h2><span class="note">按档自动折算 · 不让模型写</span></div>
+  <div class="plan">
+  <table><thead><tr><th>层级</th><th>人数</th><th>角色</th><th>资产量</th></tr></thead>
+<tbody><tr><td>主角组</td><td>2</td><td>林末、小满</td><td>全套角色设定图 + 逐镜一致性核对</td></tr>
+<tr><td>重要配角</td><td>0</td><td>—</td><td>半身参考图，关键戏核对</td></tr>
+<tr><td>功能性角色</td><td>1</td><td>传信纸鹤</td><td>提示词直出，松散一致即可</td></tr>
+<tr><td>场景环境</td><td>3+3</td><td>现代办公室、架空道观及门前、镇上市集与窄巷（+现代办公室、架空道观及门前、镇上市集与窄巷复用）</td><td>主场景各一套环境参考 + 光照基调</td></tr>
+<tr><td>生成难点</td><td>0</td><td>—</td><td>拍摄前逐条过预警清单</td></tr></tbody></table>
+  </div>
+</section>
+
+<section id="sec-characters">
+  <div class="sec-h"><span class="no">07</span><h2>人物表</h2></div>
+  <table><thead><tr><th>ID</th><th>角色</th><th>层级</th><th>定位</th><th>人物弧</th><th>← 改动记录</th></tr></thead>
+<tbody><tr><td>C01</td><td>林末</td><td>主角组</td><td>AI 工程师；从把问题一股脑交给工具，转向先确认目标、观察后验证。</td><td>从疲惫地要求别人或 AI 替自己解决一切，到自己界定成功条件、检查证据并验证方案；他仍与小满协作，但不把判断权交给她或工具。</td><td>初始剧本：林末</td></tr>
+<tr><td>C02</td><td>小满</td><td>主角组</td><td>年轻道士；熟悉符法规则，却也渴望高人替自己承担难题。</td><td>从期待召来高人代替自己发愁，到承认自己也会求助；她与林末分享符法知识、共同验证判断，不再把责任推给高人。</td><td>初始剧本：小满</td></tr>
+<tr><td>C03</td><td>传信纸鹤</td><td>功能性角色</td><td>符纸转换者、侦察者和旁观吐槽者。</td><td>—</td><td>初始剧本：传信纸鹤</td></tr></tbody></table>
+</section>
+
+<section id="sec-adaptation">
+  <div class="sec-h"><span class="no">08</span><h2>改编说明</h2><span class="note">为什么这么改 · 附原文依据</span></div>
+  <p class="core">习惯把问题交给 AI 的工程师与盼着高人救场的小道士，被一张错位的召唤符带到一起；他们学会借助工具与同伴，却不把判断权交出去，通过证据、目标和验证作出自己的选择，并发现彼此都是正在求助的人。</p>
+  <h3 class="sub">保留</h3><table><thead><tr><th>内容</th><th>理由</th><th>原文依据</th></tr></thead>
+<tbody><tr><td>保留林末与小满的双向召唤反转：他们召来的不是高人，而是遇到同类困境的人。</td><td>这是标题、开场愿望和结尾关系变化汇合的情感落点。</td><td><q>上面写着：“召唤一个和我遇到同样问题的人。”</q></td></tr>
+<tr><td>保留从宽泛指令失控到小范围测试、确认后行动的因果链。</td><td>它把 AI 使用习惯转化为具体危机与人物成长，而不止停留在口号。</td><td><q>他先写一条小范围指令“停在原地”</q></td></tr>
+<tr><td>保留回到办公室后的选择变化及小满隔屏出现的喜剧尾声。</td><td>尾声验证林末能独立判断并验证方案，同时为跨时空联系留下下一步悬念。</td><td><q>想了想，打开测试记录，回复：“我先确认两个问题。”</q></td></tr></tbody></table>
+  <h3 class="sub">砍掉</h3><table><thead><tr><th>内容</th><th>理由</th></tr></thead>
+<tbody><tr><td>压缩金元宝清理和纸鹤搬运失败的重复插科打诨，仅保留一处作为收尾节奏点。</td><td>单集约五分钟，需要把时长留给失控、测试救援和双向求助反转。</td></tr>
+<tr><td>将救援过程中的狗、推车改造和多轮搬运细节收束为一组清晰的协作动作。</td><td>保留观察与分工主题，减少支线动作对主线高潮的稀释。</td></tr></tbody></table>
+  
+  <h3 class="sub">风险与对策</h3><table><thead><tr><th>内容</th><th>对策</th></tr></thead>
+<tbody><tr><td>五分钟内同时容纳穿越设定、食愿兽规则、救援过程和双向召唤反转，信息密度偏高。</td><td>用纸鹤转换符纸、小满补符、愿望被照字面执行三种可视动作交代规则；删减重复解释。</td></tr>
+<tr><td>片尾定身笑点可能让观众误读为小满没有成长。</td><td>让林末先根据测试证据设定成功条件并小范围验证；小满出现后，两人共同核对新符来源，不替对方做判断。</td></tr>
+<tr><td>续集钩子若只靠出现新怪物，可能与本集主题脱节。</td><td>让新异象成为待查证的信号；结尾表现林末和小满主动选择调查，并先核对来源与规则。</td></tr>
+<tr><td>初始剧本没有明确交代下一集的核心事件，未知符印属于续集方向提案。</td><td>把新符印控制为悬念而非既定剧情，续写前再确认它的来源及观众期待的后续类型。</td></tr></tbody></table>
+</section>
+
+<section id="sec-gates">
+  <div class="sec-h"><span class="no">09</span><h2>质量门</h2></div>
+  <ul class="gate">
+  <li class="ok"><span class="m">✓</span><span>主角组 1–5 人</span></li>
+  <li class="ok"><span class="m">✓</span><span>重要配角 ≤ 10 人</span></li>
+  <li class="ok"><span class="m">✓</span><span>功能性角色 ≤ 10 人</span></li>
+  <li class="ok"><span class="m">✓</span><span>主场景 ≤ 5</span></li>
+  <li class="ok"><span class="m">✓</span><span>叙事道具 ≤ 8 件</span></li>
+  <li class="ok"><span class="m">✓</span><span>一次性场景已标注规避方案</span></li>
+  <li class="ok"><span class="m">✓</span><span>爽点间隔 ≤ 3 集，无真空区</span></li>
+  <li class="ok"><span class="m">✓</span><span>第 1 集有钩子</span></li>
+  <li class="bad"><span class="m">✗</span><span>大爆点不在最后一集才首次出现<small>最早在第 1 集</small></span></li>
+  <li class="ok"><span class="m">✓</span><span>每集梗概三栏齐全（含【钩子】【悬念】）</span></li>
+  <li class="ok"><span class="m">✓</span><span>三人以上同框已标注拆解方案</span></li>
+  <li class="ok"><span class="m">✓</span><span>生成难点已进预警清单</span></li>
+  <li class="ok"><span class="m">✓</span><span>场景/角色引用完整，无失业角色、无空转场景</span></li>
+  <li class="ok"><span class="m">✓</span><span>梗概是叙述体，无引号对白</span></li>
+</ul>
+  <p class="gsum"><b>1 项未过</b></p>
+</section>
+
+<p class="foot">大纲由模型依据原文生成，质量门由脚本确定性检查。</p>
+</div>
+
+<script type="application/json" id="outline-data">{"source":"此符无效，请重新输入","lang":"zh","params":{"episodes":1,"minutesPerEpisode":5,"genre":"古今穿越·奇幻喜剧","adaptMode":"抽核","preferences":[]},"adaptation":{"core":"习惯把问题交给 AI 的工程师与盼着高人救场的小道士，被一张错位的召唤符带到一起；他们学会借助工具与同伴，却不把判断权交出去，通过证据、目标和验证作出自己的选择，并发现彼此都是正在求助的人。","keep":[{"what":"保留林末与小满的双向召唤反转：他们召来的不是高人，而是遇到同类困境的人。","why":"这是标题、开场愿望和结尾关系变化汇合的情感落点。","evidence":"上面写着：“召唤一个和我遇到同样问题的人。”"},{"what":"保留从宽泛指令失控到小范围测试、确认后行动的因果链。","why":"它把 AI 使用习惯转化为具体危机与人物成长，而不止停留在口号。","evidence":"他先写一条小范围指令“停在原地”"},{"what":"保留回到办公室后的选择变化及小满隔屏出现的喜剧尾声。","why":"尾声验证林末能独立判断并验证方案，同时为跨时空联系留下下一步悬念。","evidence":"想了想，打开测试记录，回复：“我先确认两个问题。”"}],"cut":[{"what":"压缩金元宝清理和纸鹤搬运失败的重复插科打诨，仅保留一处作为收尾节奏点。","why":"单集约五分钟，需要把时长留给失控、测试救援和双向求助反转。"},{"what":"将救援过程中的狗、推车改造和多轮搬运细节收束为一组清晰的协作动作。","why":"保留观察与分工主题，减少支线动作对主线高潮的稀释。"}],"merge":[],"risks":[{"what":"五分钟内同时容纳穿越设定、食愿兽规则、救援过程和双向召唤反转，信息密度偏高。","plan":"用纸鹤转换符纸、小满补符、愿望被照字面执行三种可视动作交代规则；删减重复解释。"},{"what":"片尾定身笑点可能让观众误读为小满没有成长。","plan":"让林末先根据测试证据设定成功条件并小范围验证；小满出现后，两人共同核对新符来源，不替对方做判断。"},{"what":"续集钩子若只靠出现新怪物，可能与本集主题脱节。","plan":"让新异象成为待查证的信号；结尾表现林末和小满主动选择调查，并先核对来源与规则。"},{"what":"初始剧本没有明确交代下一集的核心事件，未知符印属于续集方向提案。","plan":"把新符印控制为悬念而非既定剧情，续写前再确认它的来源及观众期待的后续类型。"}],"cutNote":"压缩的是救援中的重复动作和次要笑料，不另砍人物线；主线终点是林末不再把答案交给 AI 或所谓高人，而是依据证据自行判断、验证后行动，并与小满平等协作。","mergeNote":"不合并角色。林末承担需求拆解与工具习惯，小满承担符法规则与风险判断，纸鹤承担转换、侦察和旁观吐槽，三者功能不同。"},"characters":[{"id":"C01","name":"林末","role":"AI 工程师；从把问题一股脑交给工具，转向先确认目标、观察后验证。","tier":"lead","arc":"从疲惫地要求别人或 AI 替自己解决一切，到自己界定成功条件、检查证据并验证方案；他仍与小满协作，但不把判断权交给她或工具。","from":["初始剧本：林末"]},{"id":"C02","name":"小满","role":"年轻道士；熟悉符法规则，却也渴望高人替自己承担难题。","tier":"lead","arc":"从期待召来高人代替自己发愁，到承认自己也会求助；她与林末分享符法知识、共同验证判断，不再把责任推给高人。","from":["初始剧本：小满"]},{"id":"C03","name":"传信纸鹤","role":"符纸转换者、侦察者和旁观吐槽者。","tier":"functional","from":["初始剧本：传信纸鹤"]}],"scenes":[{"id":"S01","name":"现代办公室","primary":true,"reusePlan":"同一办公室承载开场加班与结尾醒来；以屏幕、灯光和机位变化区分现实与符文异象。"},{"id":"S02","name":"架空道观及门前","primary":true,"reusePlan":"道观内外作为同一环境资产，台阶清理和钟声告别复用门前空间。"},{"id":"S03","name":"镇上市集与窄巷","primary":true,"reusePlan":"以同一街市环境重布摊位和推车位置，表现元宝堵门、巷口受阻与救援路线。"}],"beats":[{"id":"B01","type":"愿望照字面反噬","weight":"minor","episode":1,"setup":"林末习惯给出宽泛要求，食愿兽也会把愿望按字面执行。","payoff":"掌柜求金银满屋后，金元宝塞满铺子并困住人，建立规则和眼前危机。"},{"id":"B02","type":"万能指令失控","weight":"minor","episode":1,"setup":"林末试图用一张符同时停止一切并恢复原样。","payoff":"食愿兽卡住却倒向路人，证明未澄清目标的指令会制造新风险。"},{"id":"B03","type":"观察测试后协作救援","weight":"minor","episode":1,"setup":"小满要求先弄清符纸为何失效，林末开始检查冲突指令并缩小目标。","payoff":"两人先测试定身，再用路线、推车和木楔清出通道，救出掌柜、孩子和狗。"},{"id":"B04","type":"双向求助反转","weight":"major","episode":1,"setup":"小满原以为自己召来能解决所有问题的高人，林末也一直想找人替他解决问题。","payoff":"叠在召唤符背后的薄纸揭示，真正被召来的是遇到同样问题的人；两人承认彼此都在求助。"},{"id":"B05","type":"独立判断与续集信号","weight":"minor","episode":1,"setup":"林末带着小满留下的“先看清楚，再动手”回到办公室，老板再次要求他让 AI 自己改好。","payoff":"林末根据测试记录自己设定发券边界并先跑小样本，再决定是否采用方案。小满隔屏出现后，两人一起核对一张来源不明的新符；它显出另一道尚未识别的符印，两人决定查清来历，下一次跨界求助由此展开。"}],"episodes":[{"ep":1,"synopsis":"双十一前夜，林末因不愿细化需求而让促销助手一次发出百万张优惠券，随后在疲惫中被误录的求助愿望卷入符文。小满把他当成降妖高人，纸鹤将他的文字转换成符纸；两人尝试召来天师，却只得到模板式分析，食愿兽已闯入镇上市集。掌柜求金银满屋后，元宝塞满铺面并困住人，林末急着用一张万能符让一切停止又复原，反使食愿兽失控倾倒。小满拦下他，两人检查冲突指令，先以小范围定身符测试，再用推车、木楔和路线分工救出掌柜、孩子与狗。危机解除后，小满发现召唤符背面另有一张薄纸，显出她真正写下的是寻找一个遇到同样问题的人；林末也承认自己一直在求助。回到办公室，老板又要求他让 AI 自己改好。林末查看测试记录，自己确定优惠券的适用范围和单人上限，先用小样本验证再决定是否发布，不再把生成结果当成答案。小满留下的符映上屏幕，她没有替林末解咒，而是与他一起检查符文结构；两人确认彼此都能提供线索，却须各自判断。此时屏幕边缘浮出一枚两人都认不出的新符印，纸鹤也从画面外叼来一张空白符纸。林末没有立刻触碰，而是先记录符印、比对来源，再与小满决定共同查明它为何出现；新一轮跨界事件由此留下悬念。","hook":"林末疲惫许下求助愿望，屏幕代码扭成朱砂符文，一张黄符将他吸入其中。","suspense":"食愿兽把愿望照字面实现，铺满元宝的店铺仍困着人；万能符又令它失控倾倒，林末和小满必须先找出指令失效的原因。危机结束后，两人都认不出屏幕上新出现的符印，它从何而来、是否还会召来新的求助者，仍待查明。","sceneIds":["S01","S02","S03"],"characterIds":["C01","C02","C03"],"crowdPlan":"林末和小满在救援主镜头中分工，纸鹤负责侦察并以独立近景或画面边缘提示信息；召唤、救援、反转分镜呈现，避免三名角色挤在同一动作画面。","warnings":[]}]}</script>
+<script>
+// beat rhythm: chart / table toggle
+document.querySelectorAll('.tab').forEach((btn) => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab').forEach((b) => b.classList.toggle('on', b === btn));
+    document.querySelectorAll('.tabpane').forEach((p) => p.classList.toggle('on', p.id === btn.dataset.pane));
+  });
+});
+
+// episode overview: first three by default, one click expands for good
+const epsMore = document.querySelector('.epsmore');
+if (epsMore) {
+  epsMore.addEventListener('click', () => {
+    document.querySelector('.epswrap').classList.remove('clip');
+    epsMore.remove();
+  });
+}
+
+// export: the report carries outline.json verbatim; the download is byte-identical
+document.querySelector('.expo').addEventListener('click', (e) => {
+  const btn = e.currentTarget;
+  const url = URL.createObjectURL(
+    new Blob([document.getElementById('outline-data').textContent], { type: 'application/json' }),
+  );
+  const a = Object.assign(document.createElement('a'), { href: url, download: btn.dataset.name });
+  a.click();
+  // don't revoke immediately — Safari may kill the blob before the download finishes reading
+  setTimeout(() => URL.revokeObjectURL(url), 10000);
+});
+</script>
+</body></html>
